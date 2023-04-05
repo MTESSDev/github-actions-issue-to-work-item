@@ -501,6 +501,7 @@ async function find(vm) {
 
   try {
     client = await connection.getWorkItemTrackingApi();
+    console.log(client.serverUrl);
   } catch (error) {
     console.log("Error: Connecting to organization. Check the spelling of the organization name and ensure your token is scoped correctly.");
     core.setFailed(error);
