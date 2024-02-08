@@ -612,11 +612,12 @@ async function updateIssueBody(vm, workItem) {
 
   if (!n) {
     const octokit = new github.GitHub(vm.env.ghToken);
-
+//https://devops700.itp.extra/700/TPM/_workitems/edit/73240/
     // Recherche du dernier AB# suivi de chiffres et un lien markdown optionnel
     const regex = /[\r\n]*(?:\[AB#\d+\]\([^\)]*?\)\s*)|AB#\d+$/;
     vm.body = vm.body.replace(regex, ''); // Remplace la dernière occurrence de AB# suivie de chiffres par une chaîne vide
-    vm.body = vm.body + "\r\n\r\nAB#" + workItem.id.toString();
+    //vm.body = vm.body + "\r\n\r\nAB#" + workItem.id.toString();
+    vm.body = vm.body + "\r\n\r\n[AB#" + workItem.id.toString() + "](" + vm.env.orgUrl + vm.env.ado_organization  + "/" + vm.env.ado_project + "/_workitems/edit/" + workItem.id.toString() + ")";
 
     var result = await octokit.issues.update({
       owner: vm.owner,
