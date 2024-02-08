@@ -81,12 +81,12 @@ async function main() {
       if (vm.env.ghToken === "") {
         console.log("Warning: Missing GitHub token and unable to update issue with AB# syntax.")
       }
-      
-      issue = vm.env.ghToken != "" ? await updateIssueBody(vm, workItem) : "";
 
     } else {
       console.log(`Existing work item found: ${workItem.id}`);
     }
+
+    issue = vm.env.ghToken != "" ? await updateIssueBody(vm, workItem) : "";
 
     if (vm.env.logLevel >= 200)
       console.log(`Starting switch statement for action '${vm.action}'`);
