@@ -81,12 +81,12 @@ async function main() {
       if (vm.env.ghToken === "") {
         console.log("Warning: Missing GitHub token and unable to update issue with AB# syntax.")
       }
-      
-      issue = vm.env.ghToken != "" ? await updateIssueBody(vm, workItem) : "";
 
     } else {
       console.log(`Existing work item found: ${workItem.id}`);
     }
+
+    issue = vm.env.ghToken != "" ? await updateIssueBody(vm, workItem) : "";
 
     if (vm.env.logLevel >= 200)
       console.log(`Starting switch statement for action '${vm.action}'`);
@@ -130,9 +130,9 @@ async function main() {
 
     // set output message
     if (workItem != null || workItem != undefined) {
-      console.log(`Work item successfully created or updated: ${workItem.id}`);
-      core.setOutput(`id`, `${workItem.id}`);
+      console.log(`Work item successfully created or updated: ${workItem.id}`);      
     }
+    
   } catch (error) {
     console.log("Error in catch statement:");
     console.log(error);
@@ -514,9 +514,10 @@ async function find(vm) {
     query:
       "SELECT [System.Id], [System.WorkItemType], [System.Description], [System.Title], [System.AssignedTo], [System.State], [System.Tags] FROM workitems WHERE [System.TeamProject] = @project AND [System.Title] CONTAINS '(GitHub Issue #" +
       vm.number +
-      ")' AND [System.Tags] CONTAINS 'GitHub Issue' AND [System.Tags] CONTAINS '" +
-      vm.repository +
-      "'",
+      ")'", // AND [System.Tags] CONTAINS 'GitHub Issue' AND [System.Tags] CONTAINS '" +
+      //vm.repository + 
+      //"'",
+	  // Désactiver la clause where trop compliquée pour rien 
   };
 
   // verbose logging
@@ -612,7 +613,12 @@ async function updateIssueBody(vm, workItem) {
 
   if (!n) {
     const octokit = new github.GitHub(vm.env.ghToken);
-    vm.body = vm.body + "\r\n\r\nAB#" + workItem.id.toString();
+//https://devops700.itp.extra/700/TPM/_workitems/edit/73240/
+    // Recherche du dernier AB# suivi de chiffres et un lien markdown optionnel
+    const regex = /[\r\n]*(?:\[AB#\d+\]\([^\)]*?\)\s*)|AB#\d+$/;
+    vm.body = vm.body.replace(regex, ''); // Remplace la dernière occurrence de AB# suivie de chiffres par une chaîne vide
+    //vm.body = vm.body + "\r\n\r\nAB#" + workItem.id.toString();
+    vm.body = vm.body + "\r\n\r\n[AB#" + workItem.id.toString() + "](" + vm.env.orgUrl + "/" + vm.env.project + "/_workitems/edit/" + workItem.id.toString() + ")";
 
     var result = await octokit.issues.update({
       owner: vm.owner,
@@ -657,7 +663,7 @@ function getValuesFromPayload(payload, env) {
 		repository: "",
 		env: {
 			organization: env.ado_organization != undefined ? env.ado_organization : "",
-			orgUrl: env.ado_url != undefined ? env.ado_url : "https://dev.azure.com/" + env.ado_organization,
+			orgUrl: env.ado_url != undefined ? env.ado_url.replace(/\/+$/, '') + "/" + env.ado_organization : "https://dev.azure.com/" + env.ado_organization,
 			adoToken: env.ado_token != undefined ? env.ado_token : "",
 			ghToken: env.github_token != undefined ? env.github_token : "",
 			project: env.ado_project != undefined ? env.ado_project : "",
