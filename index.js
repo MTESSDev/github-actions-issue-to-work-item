@@ -513,9 +513,10 @@ async function find(vm) {
     query:
       "SELECT [System.Id], [System.WorkItemType], [System.Description], [System.Title], [System.AssignedTo], [System.State], [System.Tags] FROM workitems WHERE [System.TeamProject] = @project AND [System.Title] CONTAINS '(GitHub Issue #" +
       vm.number +
-      ")' AND [System.Tags] CONTAINS 'GitHub Issue' AND [System.Tags] CONTAINS '" +
-      vm.repository +
-      "'",
+      ")'", // AND [System.Tags] CONTAINS 'GitHub Issue' AND [System.Tags] CONTAINS '" +
+      //vm.repository + 
+      //"'",
+	  // Désactiver la clause where trop compliquée pour rien 
   };
 
   // verbose logging
