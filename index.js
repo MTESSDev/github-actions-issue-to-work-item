@@ -612,6 +612,7 @@ async function updateIssueBody(vm, workItem) {
 
   if (!n) {
     const octokit = new github.GitHub(vm.env.ghToken);
+    //vm.body = vm.body.replace(`AB#${workItem.id}`, '').trim();
     vm.body = vm.body + "\r\n\r\nAB#" + workItem.id.toString();
 
     var result = await octokit.issues.update({
