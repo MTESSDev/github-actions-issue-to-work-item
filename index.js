@@ -48,10 +48,10 @@ async function main() {
     // go check to see if work item already exists in azure devops or not
     // based on the title and tags
     console.log("Check to see if work item already exists");
-    let workItem = await find(vm);
+    let workItem = await (vm);
     let issue = "";
 
-    // if workItem == -1 then we have an error during find
+    // if workItem == -1 then we have an error during 
     if (workItem === -1) {
       console.log("Work item value is -1, exiting action");
       core.setFailed();
@@ -514,10 +514,9 @@ async function find(vm) {
     query:
       "SELECT [System.Id], [System.WorkItemType], [System.Description], [System.Title], [System.AssignedTo], [System.State], [System.Tags] FROM workitems WHERE [System.TeamProject] = @project AND [System.Title] CONTAINS '(GitHub Issue #" +
       vm.number +
-      ")'", // AND [System.Tags] CONTAINS 'GitHub Issue' AND [System.Tags] CONTAINS '" +
-      //vm.repository + 
-      //"'",
-	  // Désactiver la clause where trop compliquée pour rien 
+      ")' AND [System.Tags] CONTAINS 'GitHub Issue' AND [System.Tags] CONTAINS '" +
+      vm.repository +
+      "'",
   };
 
   // verbose logging
